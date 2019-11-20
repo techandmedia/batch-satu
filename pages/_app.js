@@ -1,11 +1,18 @@
 import React from "react";
 import App from "next/app";
 import Router from "next/router";
-import Layout, { Tes } from "components";
+import Layout from "components";
 import "../utils/style/ant-style.css";
 import "../utils/style/index.css";
 
-export default class MyApp extends App {
+/**
+ * Preparing to use reducer here
+*/
+export default function Tes(props) {
+  return <MyApp {...props}/>;
+}
+
+class MyApp extends App {
   state = {
     isLoggedIn: false,
     user: "andri",

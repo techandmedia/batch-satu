@@ -1,5 +1,5 @@
 import { Layout, Menu, Dropdown, Icon } from "antd";
-import Link from "../../link";
+import Link from "components/link";
 
 const { Header } = Layout;
 const ContohContext = React.createContext(null);
