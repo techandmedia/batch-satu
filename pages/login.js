@@ -1,4 +1,4 @@
-import { useEffect, useState, useReducer } from "react";
+import { useState, useReducer } from "react";
 import { Form, Icon, Input, Button, Checkbox, Row, Col } from "antd";
 import { Modal } from "components";
 
