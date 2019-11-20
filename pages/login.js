@@ -1,31 +1,30 @@
-import { useState, useReducer } from "react";
+import { useReducer } from "react";
 import { Form, Icon, Input, Button, Checkbox, Row, Col } from "antd";
 import { Modal } from "components";
+import modalReducer from "../utils/reducers/modal-reducer";
 
 function NormalLoginForm(props) {
   const { validateFields, getFieldDecorator } = props.form;
   const { user, password } = props;
-  const [isModalVisible, setModalVisible] = useState(false);
-  const [modalTitle, setModalTitle] = useState("");
-  const [modalMessage, setModalMessage] = useState("");
+  const [modal, dispatchModal] = useReducer(modalReducer, {
+    isModalVisible: false,
+    modalTitle: "",
+    modalMessage: ""
+  });
 
   function handleSubmit(e) {
     e.preventDefault();
     validateFields((err, values) => {
       if (!err) {
         console.log("Received values of form: ", values);
-        console.log("Received values of form: ", user, password);
         if (user !== values.username || password !== values.password) {
-          setModalTitle("Warning");
-          setModalMessage("Username atau Password yang Anda masukkan salah!");
+          dispatchModal({ type: "warning", values });
         } else {
-          setModalTitle("Success");
-          setModalMessage("Anda Berhasil Login!");
+          dispatchModal({ type: "success", values });
           setTimeout(() => {
             props.login();
           }, 1000);
         }
-        setModalVisible(true);
       }
     });
   }
@@ -33,12 +32,7 @@ function NormalLoginForm(props) {
   return (
     <Row type="flex" justify="center">
       <Col>
-        <Modal
-          isModalVisible={isModalVisible}
-          setModalVisible={setModalVisible}
-          modalTitle={modalTitle}
-          modalMessage={modalMessage}
-        />
+        <Modal modal={modal} dispatchModal={dispatchModal} />
         <Form onSubmit={handleSubmit} className="login-form">
           <Form.Item>
             {getFieldDecorator("username", {
