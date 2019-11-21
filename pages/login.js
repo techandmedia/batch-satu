@@ -1,30 +1,73 @@
-import { useReducer } from "react";
+import { useReducer, useEffect, useState } from "react";
 import { Form, Icon, Input, Button, Checkbox, Row, Col } from "antd";
 import { Modal } from "components";
 import modalReducer from "../utils/reducers/modal-reducer";
+import axios from "axios";
 
 function NormalLoginForm(props) {
   const { validateFields, getFieldDecorator } = props.form;
-  const { user, password } = props;
+  // const { user, password } = props;
   const [modal, dispatchModal] = useReducer(modalReducer, {
     isModalVisible: false,
     modalTitle: "",
     modalMessage: ""
   });
+  const [values, setValues] = useState(null);
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    if (values !== null) {
+      async function connect() {
+        const options = {
+          method: "post",
+          url: "http://localhost:5001/api/users/login",
+          data: {
+            username: values.username,
+            password: values.password
+          },
+          xsrfCookieName: "XSRF-TOKEN",
+          xsrfHeaderName: "X-XSRF-TOKEN"
+        };
+
+        try {
+          let result = await axios(options);
+          console.log("RESULT", result);
+          if (result.data.code === 200) {
+            setData(result.data.data[0]);
+          } else {
+            setData(false);
+            setMessage(result.data.message);
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      }
+
+      connect();
+    }
+  }, [values]);
+
+  useEffect(() => {
+    if (data !== null) {
+      if (data) {
+        dispatchModal({ type: "success" });
+        setTimeout(() => {
+          props.login();
+        }, 1000);
+      }
+      if (!data) {
+        dispatchModal({ type: "warning" });
+        setData(null);
+      }
+    }
+  }, [data]);
 
   function handleSubmit(e) {
     e.preventDefault();
     validateFields((err, values) => {
       if (!err) {
         console.log("Received values of form: ", values);
-        if (user !== values.username || password !== values.password) {
-          dispatchModal({ type: "warning", values });
-        } else {
-          dispatchModal({ type: "success", values });
-          setTimeout(() => {
-            props.login();
-          }, 1000);
-        }
+        setValues(values);
       }
     });
   }
