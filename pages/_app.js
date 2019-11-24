@@ -19,6 +19,10 @@ class MyApp extends App {
     password: "123"
   };
 
+  // componentDidUpdate(prevProps, prevState){
+  //   prevProps, prevState.isLoggedIn !== this.state.isLoggedIn
+  // }
+
   login = () => {
     this.setState({ isLoggedIn: true });
     Router.push("/dashboard");
